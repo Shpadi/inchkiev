@@ -7,66 +7,80 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     activeUsers: null,
-    nextUser: null,
     symptoms: [
       {
-        drugId: 0,
+        correctDrugId: 0,
+        unCorrectDrugId: 2,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 2,
+        unCorrectDrugId: 1,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 1,
+        correctDrugId: 1,
+        unCorrectDrugId: 0,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 1,
+        correctDrugId: 1,
+        unCorrectDrugId: 2,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 0,
+        correctDrugId: 0,
+        unCorrectDrugId: 2,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 2,
+        unCorrectDrugId: 1,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 1,
+        correctDrugId: 1,
+        unCorrectDrugId: 0,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 1,
+        correctDrugId: 1,
+        unCorrectDrugId: 2,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 0,
+        correctDrugId: 0,
+        unCorrectDrugId: 1,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 2,
+        unCorrectDrugId: 0,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 2,
+        unCorrectDrugId: 0,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 1,
+        correctDrugId: 1,
+        unCorrectDrugId: 2,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 2,
+        unCorrectDrugId: 1,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 0,
+        unCorrectDrugId: 1,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       },
       {
-        drugId: 2,
+        correctDrugId: 1,
+        unCorrectDrugId: 2,
         describe: 'Дитя, дай бабусі ліки від тиску за цим рецептом, але не дорогих, тех, что дешевле'
       }
     ],
@@ -86,11 +100,39 @@ export default new Vuex.Store({
         id: 2,
         description: 'хз должно помочь'
       }
-    ]
+    ],
+    happyCount: 0,
+    deadCount: 0,
+    hearthCount: 0,
+    activeCharacterIndex: 0,
+    chosenDrugs: []
   },
   mutations: {
     setActiveUser (state, item) {
       state.activeUsers = item
+    },
+    increaseActiveCharacterIndex (state) {
+      state.activeCharacterIndex++
+    },
+    increaseHappyFace (state) {
+      state.happyCount++
+    },
+    increaseSadFace (state) {
+      state.deadCount++
+    },
+    increaseHeart (state) {
+      state.hearthCount++
+    },
+    pushDrugId (state, id) {
+      state.chosenDrugs.push(id)
+    },
+    setNull (state) {
+      state.activeUsers = null
+      state.happyCount = 0
+      state.deadCount = 0
+      state.hearthCount = 0
+      state.activeCharacterIndex = 0
+      state.chosenDrugs = []
     }
   },
   actions: {
@@ -106,6 +148,13 @@ export default new Vuex.Store({
       } catch (e) {
         console.log(e.response)
       }
+    },
+    chooseDrugForUser ({ commit, state }, drugId) {
+      if (state.activeUsers[state.activeCharacterIndex].symptom.correctDrugId === drugId) commit('increaseHappyFace')
+      else if (state.activeUsers[state.activeCharacterIndex].symptom.unCorrectDrugId === drugId) commit('increaseSadFace')
+      else commit('increaseHeart')
+      commit('increaseActiveCharacterIndex')
+      commit('pushDrugId', drugId)
     }
   }
 })

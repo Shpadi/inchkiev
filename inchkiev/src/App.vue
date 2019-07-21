@@ -9,6 +9,7 @@
 body {
   margin: 0;
   padding: 0;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -17,13 +18,15 @@ body {
   text-align: center;
   color: #2c3e50;
 }
-#nav {
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+
+a {
+  font-weight: bold;
+  color: $c-white;
+  text-decoration: none;
+
+  &.router-link-exact-active {
+    color: $c-white;
   }
 }
+
 </style>

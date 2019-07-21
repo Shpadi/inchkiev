@@ -1,37 +1,41 @@
 <template>
-  <div class="game">
+  <div v-if="activeUsers" class="game">
     <div class="game__sidebar">
       <div class="game__menu">
-        <div class="game__menu-item"><img src="../assets/icons/home.svg"></div>
-        <div class="game__menu-item"><img src="../assets/icons/home.svg"></div>
+        <div class="game__menu-item"><router-link to="/"><img src="../assets/icons/home.svg"></router-link></div>
+        <div class="game__menu-item" @click="location.reload()"><img src="../assets/icons/home.svg"></div>
       </div>
       <div class="game__params">
-        <p class="game__params-title">Params:</p>
+        <p class="game__params-title">Параметры:</p>
         <div class="game__params-item  mr-10">
-          <img src="../assets/icons/sad_face.svg"> <span class="param__count">2</span>
+          <img src="../assets/icons/sad_face.svg"> <span class="param__count"> {{ deadCount }} </span>
         </div>
         <div class="game__params-item">
-          <img src="../assets/icons/happy_face.svg"> <span class="param__count">3</span>
+          <img src="../assets/icons/happy_face.svg"> <span class="param__count"> {{ happyCount }}</span>
         </div>
         <div class="game__params-item">
-          <img src="../assets/icons/heart.svg"> <span class="param__count">4</span>
+          <img src="../assets/icons/heart.svg"> <span class="param__count"> {{ hearthCount }} </span>
         </div>
       </div>
       <div class="game__queue">
         <div class="game__queue-overlay"></div>
         <div class="game__queue-content">
           Осталось в очереди
-          <p class="mb-0"> 0/14 </p>
+          <p class="mb-0"> {{ activeUsers.length - activeCharacterIndex }} / {{ activeUsers.length }} </p>
         </div>
       </div>
     </div>
     <div class="game__field">
-      <template v-for="(user,index) in activeUsers">
-        <Character :key="index" :user="user"/>
-      </template>
+      <div class="game__characters">
+        <template v-for="(user,index) in activeUsers">
+          <transition name="fade" :key="index">
+            <Character  v-show="activeCharacterIndex === index" :user="user"/>
+          </transition>
+        </template>
+      </div>
       <div class="game__drugs">
         <template v-for="(drug, index) in storeDrugs">
-          <div :key="drug.name + index" class="drugs__item">{{ drug.name }}</div>
+          <div :key="drug.name + index" class="drugs__item" @click="chooseDrugForUser(drug.id)">{{ drug.name }}</div>
         </template>
       </div>
     </div>
@@ -45,23 +49,25 @@ import Character from '../components/Character'
 export default {
   name: 'Game',
   components: { Character },
-  data () {
-    return {
-      swipeIndex: 0
-    }
-  },
 
   mounted () {
     this.getUser()
   },
 
+  watch: {
+    activeCharacterIndex (newVal) {
+      if (newVal === this.activeUsers.length) this.$router.push('/final')
+    }
+  },
+
   computed: {
-    ...mapState(['activeUsers', 'storeDrugs'])
+    ...mapState(['activeUsers', 'storeDrugs', 'activeCharacterIndex', 'happyCount', 'deadCount', 'hearthCount'])
   },
 
   methods: {
     ...mapActions({
-      getUser: 'getUser'
+      getUser: 'getUser',
+      chooseDrugForUser: 'chooseDrugForUser'
     }),
     chooseDrug (id) {
       console.log(id)
@@ -112,19 +118,21 @@ export default {
     }
 
     &__params-item {
-      width: 48%;
+      width: 45%;
       padding: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       max-height: 190px;
       margin-bottom: 20px;
-      font-size: 48px;
-      line-height: 59px;
+      font-size: 3.3vw;
       background: $c-white;
       box-shadow: 0 0 50px rgba(131, 42, 64, 0.4);
       box-sizing: border-box;
       border-radius: 40px;
+      img {
+        width: 2.9vw;
+      }
     }
 
     &__params-title {
@@ -136,7 +144,7 @@ export default {
     }
 
     .param__count {
-      margin-right: 30px;
+      margin-right: 1vw;
     }
 
     &__queue {
@@ -156,8 +164,7 @@ export default {
       position: relative;
       z-index: 111;
       padding: 20px 50px 0;
-      font-size: 36px;
-      line-height: 44px;
+      font-size: 2.1vw;
       letter-spacing: 0.02em;
       color: $c-white;
     }
@@ -168,6 +175,13 @@ export default {
       justify-content: center;
       position: relative;
       width: 68%;
+      overflow: hidden;
+    }
+
+    &__characters {
+      position: relative;
+      width: 55%;
+      height: 60vh;
     }
 
     &__drugs {
@@ -185,8 +199,7 @@ export default {
       &__item {
         width: 280px;
         padding: 20px 0;
-        font-size: 28px;
-        line-height: 34px;
+        font-size: 1.9vw;
         color: $c-white;
         text-align: center;
         border-radius: 100px;
@@ -194,5 +207,12 @@ export default {
         cursor: pointer;
       }
     }
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+    opacity: 0;
   }
 </style>

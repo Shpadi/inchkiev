@@ -6,7 +6,7 @@
         <p class="home__desc"> Добро пожаловать в игру </p>
         <h1 class="home__title"> Помоги <br> ФАРМАЦЕВТУ </h1>
         <div class="text-center">
-          <button class="home__button"> <router-link to="/game"> Hачать </router-link> </button>
+          <router-link to="/game" class="home__button button"> Hачать </router-link>
         </div>
       </div>
     </div>
@@ -28,6 +28,7 @@ export default {
     background-image: url('../assets/homebg.jpg');
     background-size: cover;
     color: $c-white;
+    overflow: hidden;
 
     &__overlay {
       position: absolute;
