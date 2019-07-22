@@ -143,7 +143,6 @@ export default new Vuex.Store({
           const symptomId = Math.round(Math.random() * 14)
           item['symptom'] = state.symptoms[symptomId]
         })
-        console.log(result.data)
         commit('setActiveUser', result.data)
       } catch (e) {
         console.log(e.response)

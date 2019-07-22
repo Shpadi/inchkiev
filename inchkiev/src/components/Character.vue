@@ -53,7 +53,7 @@ export default {
       el.style.transform = `rotate(${(this.offsetX) / 20}deg)`
       el.style.left = `${this.offsetX * 2}px`
       this.$refs.choosenDrug.style.opacity = Math.abs(this.offsetX / 50)
-      this.selectDrugId = id
+      if (this.offsetX < 0) this.selectDrugId = id
     },
 
     rightMove (el, id) {
@@ -63,7 +63,7 @@ export default {
       el.style.transform = `rotate(${(this.offsetX) / 20}deg)`
       el.style.left = `${this.offsetX * 2}px`
       this.$refs.choosenDrug.style.opacity = Math.abs(this.offsetX / 50)
-      this.selectDrugId = id
+      if (this.offsetX > 0) this.selectDrugId = id
     },
 
     topMove (el, id) {

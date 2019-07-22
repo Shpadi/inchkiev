@@ -1,9 +1,9 @@
 <template>
-  <div v-if="activeUsers" class="game">
+  <div class="game">
     <div class="game__sidebar">
       <div class="game__menu">
         <div class="game__menu-item"><router-link to="/"><img src="../assets/icons/home.svg"></router-link></div>
-        <div class="game__menu-item" @click="location.reload()"><img src="../assets/icons/home.svg"></div>
+        <div class="game__menu-item" @click="reloadGame"><img src="../assets/refresh.jpg"></div>
       </div>
       <div class="game__params">
         <p class="game__params-title">Параметры:</p>
@@ -21,12 +21,12 @@
         <div class="game__queue-overlay"></div>
         <div class="game__queue-content">
           Осталось в очереди
-          <p class="mb-0"> {{ activeUsers.length - activeCharacterIndex }} / {{ activeUsers.length }} </p>
+          <p v-if="activeUsers" class="mb-0"> {{ activeUsers.length - activeCharacterIndex }} / {{ activeUsers.length }} </p>
         </div>
       </div>
     </div>
     <div class="game__field">
-      <div class="game__characters">
+      <div v-if="activeUsers" class="game__characters">
         <template v-for="(user,index) in activeUsers">
           <transition name="fade" :key="index">
             <Character  v-show="activeCharacterIndex === index" :user="user"/>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import Character from '../components/Character'
 
 export default {
@@ -56,7 +56,7 @@ export default {
 
   watch: {
     activeCharacterIndex (newVal) {
-      if (newVal === this.activeUsers.length) this.$router.push('/final')
+      if (this.activeUsers && (newVal === this.activeUsers.length)) this.$router.push('/final')
     }
   },
 
@@ -69,8 +69,12 @@ export default {
       getUser: 'getUser',
       chooseDrugForUser: 'chooseDrugForUser'
     }),
-    chooseDrug (id) {
-      console.log(id)
+    ...mapMutations({
+      setNull: 'setNull'
+    }),
+    reloadGame () {
+      this.setNull()
+      this.getUser()
     }
   }
 }
@@ -80,6 +84,7 @@ export default {
   .game {
     width: 100%;
     height: 100vh;
+    height: calc(var(--vh-static, 1vh) * 100);
     display: flex;
     justify-content: space-between;
 
@@ -107,6 +112,10 @@ export default {
       padding: 15px;
       background-color: $c-white;
       border-radius: 50%;
+      img {
+        width: 40px;
+        height: 40px;
+      }
     }
 
     &__params {
@@ -197,7 +206,8 @@ export default {
 
     .drugs {
       &__item {
-        width: 280px;
+        width: 30%;
+        max-width: 280px;
         padding: 20px 0;
         font-size: 1.9vw;
         color: $c-white;

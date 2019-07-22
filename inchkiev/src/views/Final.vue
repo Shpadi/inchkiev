@@ -86,6 +86,7 @@ export default {
   .final {
     position: relative;
     height: 100vh;
+    height: calc(var(--vh-static, 1vh) * 100);
 
     &__home {
       padding: 70px 0 0 50px;
